@@ -1,1 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/addons/p5.sound.min.js"></script>
+   
+    <meta charset="utf-8" />
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css" rel="stylesheet" />
+    
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+    />
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
+    
+
+    <!-- jQuery is a library that simplifies many things in JavaScript. 
+	     We'll use it to retrieve data from the web. -->
+    <!--script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://npmcdn.com/leaflet-geometryutil"></script-->
+    <script src="https://npmcdn.com/@turf/turf/turf.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ==" crossorigin="" />
+
+  <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js" integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw==" crossorigin=""></script>
+    
+    
+    <!-- more -->
+        <script src="//d3js.org/d3.v4.min.js"></script>
+    <script src="//npmcdn.com/leaflet@1.2.0/dist/leaflet.js"></script>
+    <script src="//npmcdn.com/geotiff@0.3.6/dist/geotiff.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/chroma-js/2.1.0/chroma.min.js"></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"/>
+   
+<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+<!-- <script src="https://unpkg.com/leaflet@0.7.7/dist/leaflet.js"></script> -->
+<script src="https://stuartmatthews.github.io/leaflet-geotiff/vendor/geotiff.js"></script>
+<script src="https://stuartmatthews.github.io/leaflet-geotiff/vendor/plotty.js"></script>
+
+<script src="https://stuartmatthews.github.io/leaflet-geotiff/leaflet-geotiff.js"></script>
+    <!-- Plugin -->
+    <script src="dist/leaflet.canvaslayer.field.js"></script>
+      <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.3.0/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.3.0/dist/MarkerCluster.Default.css" />
+     <script src="https://unpkg.com/leaflet.markercluster@1.3.0/dist/leaflet.markercluster.js"></script>
+
+    <style>
+      body { margin: 0; padding: 0; }
+      #mapid { position: absolute; top: 0; bottom: 20%; width: 100%; 
+      z-index: -1}
+    </style>
+  </head>
+  
+ 
+
+  <body>
+    <style>
+      
+      .circle {
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    background-image: url("data/red.png");
+        background-size: 32px
+    text-align: center;
+}
+      
+      .circle2 {
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    background-image: url("data/green.png");
+        background-size: 40px
+    text-align: center;
+}
+            p {
+                font-family: 'Open Sans';
+                margin: 0;
+                font-size: 13px;
+                
+            }
+   
+            #instructions  {
+              
+        position: absolute;
+        margin-top: 120px;
+        margin-left: 10px;
+        width: 300px;
+        top: 0;
+        bottom: 22%;
+        padding: 20px;
+        background-color: #fff;
+        overflow-y: scroll;
+        font-family: sans-serif;
+        border-radius: 3px;
+              
+      }
+            #climate,#context {
+              margin-top: 10px;
+              top 0;
+              
+              right:0;
+              width: 160px;
+              
+              position: static;
+              background-color: #fff;
+              overflow-y: scroll;
+              font-family: sans-serif;
+              border-radius:3px;
+
+            }
+      #shopBox {
+        margin-top: 10px;
+              top 0;
+              margin-right: 10px;
+              right:0;
+              width: 180px;
+              padding: 10px;
+              height: 290px; 
+              position: absolute;
+              background-color: #fff;
+              
+              font-family: sans-serif;
+              border-radius:3px;
+      }
+      #legend {
+              margin-top:380px;
+              top: 0;
+              margin-right: 10px;
+              right:0;
+              width: 180px;
+              padding: 10px;
+              bottom:22%; 
+              position: absolute;
+              background-color: #fff;
+              overflow-y: scroll;
+              font-family: sans-serif;
+              border-radius:3px;
+      }
+      h1 {
+        margin-top: 20px;
+  position:static;
+  font-size: 24px;
+        text-align: center;
+       
+      }
+      h2,
+h3 {
+  margin-top: 10px;
+  position:static;
+  font-size: 18px;
+}
+      .slider {width: 100%}  
+      #titleBox {
+        position: absolute;
+        margin-top: 10px;
+        margin-left: 10px;
+        width: 340px;
+        top: 0;
+        height: 80px;
+        
+        background-color: #fff;
+        
+        font-family: sans-serif;
+        border-radius: 3px;
+        
+      }
+      .geocoder {
+    width: 180px;
+}
+      
+      .myclusterRed {
+		
+			width: "32px";
+              height:"32px";
+			text-align: center;
+        background-image: url("red.png");
+        background-size: 32px
+			
+		}
+      .myclusterGreen {
+		
+			width: "40px";
+              height:"40px";
+			text-align: center;
+        background-image: url("green.png");
+        background-size: 40px
+			
+		}
+    </style>
+
+   
+    
+   
+   
+    
+
+    
+    <div id="mapid"></div>
+    
+    <div id="instructions"><h2>Information </h2><div id="RCPBase"><h3 style = "font-size: 13px"> Climate Scenarios </h3><p> Representative Concentration Pathways (RCPs) are different potential greenhouse gas concentrations over time as laid out by the Intergovernmental Panel on Climate Change (ICPP).</p> </div> <div id="RCPInfo"> </div> <div id="conInfo"></div></div>
+
+    <div id="shopBox">
+       <h2 font-size="8px" font-family = "sans-serif"> Climate Scenario: </h2>  
+      <select name="fruits" id="climate">
+        <option value="">--select--</option>
+        <option value="RCP1">2050 RCP 2.6</option>
+        <option value="RCP2">2050 RCP 4.5</option>
+       <option value="RCP3">2050 RCP 7.0</option>
+        <option value="RCP4">2050 RCP 8.5</option>
+        <option value="RCP5">2090 RCP 2.6</option>
+        <option value="RCP6">2090 RCP 4.5</option>
+        <option value="RCP7">2090 RCP 7.0</option>
+        <option value="RCP8">2090 RCP 8.5</option>
+      </select>
+       
+       <h2 font-size="8px" font-family = "sans-serif"> Maximum Allowable Risk : </h2>
+      <div class="slidecontainer">
+  <input type="range" min="0" max="1" value="0.6" class="slider" id="myRange" step="0.01">
+        <p>Risk Level: <span id="demo"></span></p>
+</div>
+      
+      <h2 font-size="8px" font-family = "sans-serif"> Contextual Variables: </h2>  
+      <select name="fruits" id="context">
+        <option value="">--select--</option>
+        <option value="people">Census Tracts</option>
+        <option value="animals">Endangered Species</option>
+       <option value="plants">Endangered Plant Species</option>
+
+      </select>
+    </div>
+    
+    <div style="position:absolute; bottom:0">
+    <div class="chart-container" style="position: relative; bottom:0 height:20vh; width:100vw">
+      <canvas id="myChart1" ></canvas> </div> </div>
+    <div id = "titleBox"><h1> California Wildfire Predictive Models</h1> </div>
+    
+    <div id="legend"> <h2>Legend: </h2> <div id = "fireLegend"> </div> <div id="legendContents"> </div>
+       </div>
+
+
+    <nav id="menu"></nav>
+    
+ 
+
+    <script >
+      
+      //initialize stuff
+      var yesCoords = [];
+      var noCoords = [];
+      var yesMarkers;
+      var noMarkers;
+      var rasterLayer;
+      var RCPScenario = "";
+      var contextJson = "no";
+      plotty.addColorScale("hello", ["#ffffe0","#FFD580", "#ff0000"], [0, 0.6, 1]);
+      
+         //icons for plotting
+      	var markerIcon = L.Icon.extend({
+		options: {
+			
+			iconSize:     [20, 35],
+			
+			
+		}
+	});
+
+	var greenIcon = new markerIcon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png'});
+	var redIcon = new markerIcon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png'});
+      
+      
+      //prepare json contextual layers
+      var data;
+      var popJson;
+      var animalJson;
+      var plantJson;
+      var contextPolygons;
+
+          async function hello(str1,str) {
+           
+       
+      data = await fetch(str1).then(response => response.json());
+    //const data = await response.json();
+         
+   
+            var tempCenter;
+            for (var i=0; i<data.features.length;i++) {
+              tempFeature = data.features[i].geometry;
+              if (tempFeature.type =="MultiPolygon") {
+                var tempCoordArray = [];
+                for (var j=0; j<tempFeature.coordinates.length;j++) {
+                  tempCoordArray.push(turf.centerOfMass(turf.polygon(tempFeature.coordinates[j])).geometry.coordinates)
+                }
+                
+                tempCenter = turf.center(turf.points(tempCoordArray)).geometry;
+           
+                
+          data.features[i]["center"] = tempCenter;
+              } else if (tempFeature.type =="Polygon") {
+                         tempCenter = turf.centerOfMass(turf.polygon(data.features[i].geometry.coordinates)).geometry;
+              
+          data.features[i]["center"] = tempCenter;
+                         }
+              
+          
+          data.features[i]["center"] = tempCenter;
+        } 
+            
+            if (str == "people") {
+            popJson = data;
+            } else if (str == "animals") {
+              animalJson = data;
+            
+            } else if (str=="plants") {
+              plantJson = data;
+            }
+            
+            
+          }
+          
+          hello("data/people.json","people");
+
+          hello("data/plants.json","plants");
+   
+          hello("data/animals.json","animals");
+     
+   
+
+    
+     var tiffLink = "https://geotiff.github.io/georaster-layer-for-leaflet-example/example_4326.tif";
+      var contextLink = "https://geotiff.github.io/georaster-layer-for-leaflet-example/example_4326.tif";
+                          // Make a Leaflet map with L.map().
+                          // Store the map in the variable 'map'.
+                         
+                          var map = L.map("mapid",
+                                          {
+                            								center: [37.694972, -120.709173],
+                            								zoom: 6 
+                          								}  // this object holds map options
+                                    );
+      
+let url2 = 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_nolabels/{z}/{x}/{y}.png';
+        L.tileLayer(url2, {
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CARTO</a>',
+           
+        }).addTo(map);
+      
+       
+      
+      document.getElementById("climate").addEventListener("change", changeClimateLayer);
+      
+      document.getElementById("context").addEventListener("change", changeContextLayer);
+      
+      var slider = document.getElementById("myRange");
+var output = document.getElementById("demo");
+output.innerHTML = slider.value;
+      
+      function changeClimateLayer(e) {
+         RCPScenario = document.getElementById("climate").value;
+          switch (RCPScenario) {
+          case '': 
+            tiffLink = "no";
+            break;
+          case "RCP1":
+            tiffLink = "https://ubc-geos472-spring2022.github.io/California-Wildfires--Final-Project/cali_fire_tifs/Wildfire_2050_RCP26.tif";
+            break;
+          case "RCP2":
+             tiffLink = "https://ubc-geos472-spring2022.github.io/California-Wildfires--Final-Project/cali_fire_tifs/Wildfire_2050_RCP45.tif";
+            break;
+          case "RCP3":
+             tiffLink = "https://ubc-geos472-spring2022.github.io/California-Wildfires--Final-Project/cali_fire_tifs/Wildfire_2050_RCP70.tif";
+            break;
+          case "RCP4":
+           tiffLink = "https://ubc-geos472-spring2022.github.io/California-Wildfires--Final-Project/cali_fire_tifs/Wildfire_2050_RCP85.tif";
+            break;
+          case "RCP5":
+            tiffLink = "https://ubc-geos472-spring2022.github.io/California-Wildfires--Final-Project/cali_fire_tifs/Wildfire_2090_RCP26.tif";
+            break;
+          case "RCP6":
+             tiffLink = "https://ubc-geos472-spring2022.github.io/California-Wildfires--Final-Project/cali_fire_tifs/Wildfire_2090_RCP45.tif";
+            break;
+          case "RCP7":
+             tiffLink = "https://ubc-geos472-spring2022.github.io/California-Wildfires--Final-Project/cali_fire_tifs/Wildfire_2090_RCP70.tif";
+            break;
+            case "RCP8":
+             tiffLink = "https://ubc-geos472-spring2022.github.io/California-Wildfires--Final-Project/cali_fire_tifs/Wildfire_2090_RCP85_2.tif";
+            break;
+          
+        }
+        updatePlot();
+      }
+     
+      
+      
+      
+      function changeContextLayer(e) {
+       var contextVar = document.getElementById("context").value;
+          switch (contextVar) {
+          case '': 
+             contextJson = "no"
+            break;
+          case "people":
+             contextJson = popJson;
+            break;
+          case "animals":
+              contextJson = animalJson;
+            break;
+          case "plants":
+              contextJson = plantJson;
+            break;
+         
+          
+        }
+        updatePlot();
+      }
+      
+      slider.addEventListener("change", function() {
+      output.innerHTML = slider.value;
+        updatePlot();
+      });
+      function updatePlot() {
+        if (!rasterLayer) {
+          rasterLayer = L.leafletGeotiff(
+            url=tiffLink,
+            options={band: 0,
+                displayMin: 0,
+                displayMax: 1,
+                name: 'wildfire layer',
+                colorScale: 'hello',
+                clampLow: false,
+                clampHigh: true,
+                
+            }
+        ).addTo(map);
+        } else {
+          rasterLayer.setURL(tiffLink);
+        
+          
+          
+        }
+        
+        //plot areas for contextual variables 
+        
+        if (contextPolygons) {
+          contextPolygons.remove();
+        }
+         contextPolygons = L.geoJson(contextJson, {weight: 0.4, fillOpacity: 0.2, color: "grey", fill: "none"});
+        contextPolygons.addTo(map);
+        
+        
+        //update contexts at risk based on rcp and threshold
+        filterCoords();
+        //update summary info based on threshold
+        contextInfo();
+        
+        
+        
+        //plot centers with dependent symbology (at risk vs not) 
+        plotPoints();
+       
+        
+        //update legend
+        updateLegend();
+        //update Information Box for RCP Information
+        updateInfo();
+        
+      }
+      
+      function updateLegend() {
+        document.getElementById("legendContents").innerHTML = "<p> Weee</p>"
+        
+        
+        if (tiffLink != "no") {
+          document.getElementById("legendContents").innerHTML = `<p>Fire Risk:  </p>
+       <p> 0 <img id="colorScaleImage" src="" style="vertical-align: middle; height:20px; width:100px; border: 2px solid #000000;"/> 1</p>`
+            document.getElementById('colorScaleImage').setAttribute('src',rasterLayer.colorScaleData);
+        } else {
+          document.getElementById("legendContents").innerHTML = ""
+        }
+      }
+      
+      function updateInfo() {
+        
+        
+        
+        
+        switch (RCPScenario) {
+          case '': 
+            document.getElementById("RCPInfo").innerHTML = "";
+            break;
+          case "RCP1":
+             document.getElementById("RCPInfo").innerHTML = `<br><p>The RCP 2.6 scenario is "very stringent", with emisissions being required to decrease in 2020 and be at zero by 2100. </p>`;
+            break;
+          case "RCP2":
+          document.getElementById("RCPInfo").innerHTML = `<br><p>The RCP 4.5 scenario is a likely one considering the depletion of natural resources, with carbon emissions starting their decline in 2040. </p>`;
+            break;
+          case "RCP3":
+           document.getElementById("RCPInfo").innerHTML = `<br><p>The RCP 7.0 scenario is on the intermediate-high end of the range, representing a baseline rather than a target. </p>`;
+            break;
+          case "RCP4":
+          document.getElementById("RCPInfo").innerHTML = `<br><p>The RCP 8.5 scenario is one without any emissions mitigation, and due to a lack of potential resources, is highly unlikely. </p>`;
+            break;
+          case "RCP5":
+             document.getElementById("RCPInfo").innerHTML = `<br><p>The RCP 2.6 scenario is "very stringent", with emisissions being required to decrease in 2020 and be at zero by 2100. </p>`;
+            break;
+          case "RCP6":
+            document.getElementById("RCPInfo").innerHTML = `<br><p>The RCP 4.5 scenario is a likely one considering the depletion of natural resources, with carbon emissions starting their decline in 2040. </p>`;
+            break;
+          case "RCP7":
+              document.getElementById("RCPInfo").innerHTML = `<br><p>The RCP 7.0 scenario is on the intermediate-high end of the range, representing a baseline rather than a target.</p>`;
+            break;
+            case "RCP8":
+            document.getElementById("RCPInfo").innerHTML = `<br><p>The RCP 8.5 scenario is one without any emissions mitigation, and due to a lack of potential resources, is highly unlikely. </p>`;
+            break;
+          
+        }
+        
+        
+        
+      }
+      
+      function plotPoints() {
+        if (yesMarkers && noMarkers) {
+          yesMarkers.remove();
+          noMarkers.remove();
+        }
+        yesMarkers =  new L.MarkerClusterGroup({ 
+    iconCreateFunction: function (cluster) {
+        var markers = cluster.getAllChildMarkers();
+        var html = '<div class="circle">' + markers.length + '</div>';
+        return L.divIcon({ html: html,className: 'myclusterRed', iconSize: L.point(32, 32) });
+    },
+    spiderfyOnMaxZoom: false, showCoverageOnHover: true, zoomToBoundsOnClick: true 
+});
+        noMarkers = new L.MarkerClusterGroup({ 
+    iconCreateFunction: function (cluster) {
+        var markers = cluster.getAllChildMarkers();
+        var html = '<div class="circle2">' + markers.length + '</div>';
+        return L.divIcon({ html: html, className: 'myclusterGreen',iconSize: L.point(40, 40) });
+    },
+    spiderfyOnMaxZoom: false, showCoverageOnHover: true, zoomToBoundsOnClick: true 
+});
+      
+        if (document.getElementById("context").value == "animals" || document.getElementById("context").value == "plants")  {
+        for (i=0;i<yesCoords.length;i++) {
+          title = `Common Name:  ${yesCoords[i].properties.comname} <br> Scientific Name:  ${yesCoords[i].properties.sciname} `
+          var marker = L.marker(new L.LatLng(yesCoords[i].center.coordinates[1], yesCoords[i].center.coordinates[0]), { title: title ,icon: redIcon,stuff: i});
+			marker.bindPopup(title);
+			yesMarkers.addLayer(marker);
+          
+          
+        }
+        
+        map.addLayer(yesMarkers);
+        for (i=0;i<noCoords.length;i++) {
+          title = `Common Name:  ${noCoords[i].properties.comname} <br> Scientific Name:  ${noCoords[i].properties.sciname} `
+          var marker = L.marker(new L.LatLng(noCoords[i].center.coordinates[1], noCoords[i].center.coordinates[0]), { title: title ,icon: greenIcon, stuff: i});
+			marker.bindPopup(title);
+			noMarkers.addLayer(marker);
+          
+          
+        }
+        
+        map.addLayer(noMarkers);
+        } else if (document.getElementById("context").value== "people") {
+          for (i=0;i<yesCoords.length;i++) {
+          title = `Population: ${yesCoords[i].properties.P1_001N}`
+          var marker = L.marker(new L.LatLng(yesCoords[i].center.coordinates[1], yesCoords[i].center.coordinates[0]), { title: title ,icon: redIcon,stuff: i});
+			marker.bindPopup(title);
+			yesMarkers.addLayer(marker);
+          
+          
+        }
+        
+        map.addLayer(yesMarkers);
+        for (i=0;i<noCoords.length;i++) {
+          title = `Population: ${noCoords[i].properties.P1_001N}`
+          var marker = L.marker(new L.LatLng(noCoords[i].center.coordinates[1], noCoords[i].center.coordinates[0]), { title: title ,icon: greenIcon,stuff: i});
+			marker.bindPopup(title);
+			noMarkers.addLayer(marker);
+          
+          
+        }
+        
+        map.addLayer(noMarkers);
+        } 
+        
+    
+      }
+      
+      function filterCoords() {
+        yesCoords = [];
+        noCoords = []; 
+        if (contextJson != "no") {
+        for (var i=0; i<contextJson.features.length;i++) {
+          tempCoords = contextJson.features[i].center.coordinates
+          if (rasterLayer.getValueAtLatLng(tempCoords[1],tempCoords[0]) < document.getElementById("myRange").value) {
+            noCoords.push(contextJson.features[i]);
+          } else {
+            yesCoords.push(contextJson.features[i]);
+          }
+          
+        }
+       
+      }
+        
+      }
+      
+      function contextInfo() {
+        var contextVar = document.getElementById("context").value;
+          switch (contextVar) {
+          case '': 
+             document.getElementById("conInfo").innerHTML = "";
+            break;
+          case "people":
+              //calculate POC among population
+              var pop=0;
+              var whi=0;
+              for (var i=0; i<contextJson.features.length; i++) {
+           pop=pop+ parseInt(contextJson.features[i].properties.P1_001N);
+                whi=whi+parseInt(contextJson.features[i].properties.P1_003N);
+                
+              }
+              var popY=0;
+              var whiY=0;
+              for (var i=0; i<yesCoords.length; i++) {
+           popY=popY+ parseInt(yesCoords[i].properties.P1_001N);
+                whiY=whiY+parseInt(yesCoords[i].properties.P1_003N);
+                
+              }
+              var perc = 1-whi/pop;
+              perc = perc.toFixed(2);
+              var percY = 1-whiY/popY;
+              percY = percY.toFixed(2)
+             document.getElementById("conInfo").innerHTML = `<h3 style = "font-size: 13px"> Population Impact Summary </h3><p>Census Tracts at Risk: ${yesCoords.length} out of ${yesCoords.length+noCoords.length} </p><br> <p>Of the at-risk population, ${percY*100}% are people of color (POC) while in California, ${perc*100}% of people are POC. </p>`;
+            break;
+          case "animals":
+              totalArea = 0;
+              riskArea = 0;
+              riskArea2 = 0;
+              totalArea2 = 0;
+              speciesCount = 1;
+              for (var i=0; i<yesCoords.length; i++) {
+                if (i>0) {
+                
+                if (yesCoords[i].properties.sciname != compareSpecies) {
+                  speciesCount = speciesCount+1;
+                  
+                }
+                
+                
+              }
+               compareSpecies = yesCoords[i].properties.sciname;
+           riskArea=riskArea+ Number(yesCoords[i].properties.Acres_and_Miles.replace(' acres','')) ;
+             totalArea=totalArea+ Number(yesCoords[i].properties.Acres_and_Miles.replace(' acres','')) ;   
+                
+                
+                
+              }
+               for (var i=0; i<noCoords.length; i++) {
+           
+                  totalArea=totalArea+ Number(noCoords[i].properties.Acres_and_Miles.replace(' acres','')) ;   
+               
+                
+              }
+              var percRisk = riskArea/totalArea;
+            
+              
+              document.getElementById("conInfo").innerHTML = `<h3 style = "font-size: 13px"> Endangered Animal Species Impact Summary </h3><p>Habitat Area At Risk: ${percRisk.toFixed(2)*100}%, <br>
+Species at Risk: ${speciesCount} out of 56</p>`;
+             
+            break;
+          case "plants":
+             totalArea = 0;
+              riskArea = 0;
+              riskArea2 = 0;
+              totalArea2 = 0;
+              speciesCount = 1;
+              for (var i=0; i<yesCoords.length; i++) {
+              if (i>0) {
+                
+                if (yesCoords[i].properties.sciname != compareSpecies) {
+                  speciesCount = speciesCount+1;
+                  
+                }
+                
+                
+              }
+               compareSpecies = yesCoords[i].properties.sciname;
+           riskArea=riskArea+ Number(yesCoords[i].properties.Acres_and_Miles.replace(' acres',''));
+             totalArea=totalArea+ Number(yesCoords[i].properties.Acres_and_Miles.replace(' acres',''));   
+                
+                 
+              }
+               for (var i=0; i<noCoords.length; i++) {
+         
+                  totalArea=totalArea+ Number(noCoords[i].properties.Acres_and_Miles.replace(' acres','')) ;   
+               
+                
+              }
+              var percRisk = riskArea/totalArea;
+              
+              
+              document.getElementById("conInfo").innerHTML = `<h3 style = "font-size: 13px"> Endangered Plant Species Impact Summary </h3><p>Habitat Area At Risk: ${percRisk.toFixed(2)*100}% <br>
+Species at Risk: ${speciesCount} out of 62</p>`;
+            break;
+         
+          
+        }
+      }
+    
+     //!!! check if working?
+      map.on("click", (e) => {        
+       
+  value = rasterLayer.getValueAtLatLng(e.latlng.lat,e.latlng.lng);
+        
+      if (value>0) {
+      var popup = L.popup()
+    .setLatLng([e.latlng.lat,e.latlng.lng])
+    .setContent(`<p>Wildfire Risk: ${value.toFixed(2)}</p>`)
+    .openOn(map);
+      }
+        
+      
+    });
+      
+      
+    </script>
+  </body>
+</html>
 
