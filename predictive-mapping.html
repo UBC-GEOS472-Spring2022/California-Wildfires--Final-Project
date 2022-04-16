@@ -48,7 +48,7 @@
 
     <style>
       body { margin: 0; padding: 0; }
-      #mapid { position: absolute; top: 0; bottom: 20%; width: 100%; 
+      #mapid { position: absolute; top: 0; bottom: 0.1%; width: 100%; 
       z-index: -1}
     </style>
   </head>
@@ -65,6 +65,14 @@
     background-image: url("red.png");
         background-size: 32px
     text-align: center;
+}
+      
+      .legend-key {
+  display: inline-block;
+  border-radius: 20%;
+  width: 10px;
+  height: 10px;
+  margin-right: 5px;
 }
       
       .circle2 {
@@ -89,7 +97,7 @@
         margin-left: 10px;
         width: 300px;
         top: 0;
-        bottom: 22%;
+        bottom: 3%;
         padding: 20px;
         background-color: #fff;
         overflow-y: scroll;
@@ -126,16 +134,16 @@
               border-radius:3px;
       }
       #legend {
-              margin-top:380px;
+              margin-top:400px;
               top: 0;
               margin-right: 10px;
               right:0;
               width: 180px;
               padding: 10px;
-              bottom:22%; 
+              bottom:3%; 
               position: absolute;
               background-color: #fff;
-              overflow-y: scroll;
+              
               font-family: sans-serif;
               border-radius:3px;
       }
@@ -218,7 +226,7 @@ h3 {
        
        <h2 font-size="8px" font-family = "sans-serif"> Maximum Allowable Risk : </h2>
       <div class="slidecontainer">
-  <input type="range" min="0" max="1" value="0.6" class="slider" id="myRange" step="0.01">
+  <input type="range" min="0" max="1" value="0.00" class="slider" id="myRange" step="0.01">
         <p>Risk Level: <span id="demo"></span></p>
 </div>
       
@@ -237,7 +245,7 @@ h3 {
       <canvas id="myChart1" ></canvas> </div> </div>
     <div id = "titleBox"><h1> California Wildfire Predictive Models</h1> </div>
     
-    <div id="legend"> <h2>Legend: </h2> <div id = "fireLegend"> </div> <div id="legendContents"> </div>
+    <div id="legend"> <h2>Legend: </h2> <div id="legendContents"> </div><div id="legendContents2"> </div>
        </div>
 
 
@@ -255,6 +263,12 @@ h3 {
       var rasterLayer;
       var RCPScenario = "";
       var contextJson = "no";
+      var selectedPolygon;
+      
+      var defaultStyle = 
+   {weight: 0.4, fillOpacity: 0.2, color: "grey", fill: "none"};
+      
+      var highlightStyle =  {weight: 0.4, fillOpacity: 0.9, color: "grey", fill: "grey"};
       plotty.addColorScale("hello", ["#ffffe0","#FFD580", "#ff0000"], [0, 0.6, 1]);
       
          //icons for plotting
@@ -446,7 +460,7 @@ output.innerHTML = slider.value;
         if (contextPolygons) {
           contextPolygons.remove();
         }
-         contextPolygons = L.geoJson(contextJson, {weight: 0.4, fillOpacity: 0.2, color: "grey", fill: "none"});
+         contextPolygons = L.geoJson(contextJson, { onEachFeature: onEachFeature});
         contextPolygons.addTo(map);
         
         
@@ -470,15 +484,29 @@ output.innerHTML = slider.value;
       
       function updateLegend() {
         document.getElementById("legendContents").innerHTML = "<p> Weee</p>"
-        
+        //makes sure labels on legend are correct based on contextual layer
+        var label = ""
+        if (document.getElementById("context").value == "people") {
+         label = "Census Tracts" 
+        } else if (document.getElementById("context").value == "plants") {
+          label = "Plant Species"
+        } else if (document.getElementById("context").value == "animals") {
+          label = "Animal Species"
+        }
         
         if (tiffLink != "no") {
-          document.getElementById("legendContents").innerHTML = `<p>Fire Risk:  </p>
+          document.getElementById("legendContents").innerHTML = `<p><strong>Fire Risk:  </strong></p> <br>
        <p> 0 <img id="colorScaleImage" src="" style="vertical-align: middle; height:20px; width:100px; border: 2px solid #000000;"/> 1</p>`
             document.getElementById('colorScaleImage').setAttribute('src',rasterLayer.colorScaleData);
         } else {
           document.getElementById("legendContents").innerHTML = ""
         }
+      
+        if (label != "") {
+          document.getElementById("legendContents2").innerHTML = `<br> <p><strong>Contextual Layers: </strong></p> <br><div><p><span class="legend-key" style="background-color: red"></span> <span >  ${label} at Risk</span></p></div><br>   <div><p><span class="legend-key" style="background-color: green;"></span> <span >  ${label} Not at Risk</span></p></div>`
+        }
+        
+
       }
       
       function updateInfo() {
@@ -531,7 +559,7 @@ output.innerHTML = slider.value;
         var markers = cluster.getAllChildMarkers();
         var html = '<div class="circle">' + markers.length + '</div>';
         return L.divIcon({ html: html,className: 'myclusterRed', iconSize: L.point(32, 32) });
-    },
+    }, 
     spiderfyOnMaxZoom: false, showCoverageOnHover: true, zoomToBoundsOnClick: true 
 });
         noMarkers = new L.MarkerClusterGroup({ 
@@ -546,8 +574,9 @@ output.innerHTML = slider.value;
         if (document.getElementById("context").value == "animals" || document.getElementById("context").value == "plants")  {
         for (i=0;i<yesCoords.length;i++) {
           title = `Common Name:  ${yesCoords[i].properties.comname} <br> Scientific Name:  ${yesCoords[i].properties.sciname} `
-          var marker = L.marker(new L.LatLng(yesCoords[i].center.coordinates[1], yesCoords[i].center.coordinates[0]), { title: title ,icon: redIcon,stuff: i});
+          var marker = new L.marker(new L.LatLng(yesCoords[i].center.coordinates[1], yesCoords[i].center.coordinates[0]), { title: title ,icon: redIcon,stuff: yesCoords[i]});
 			marker.bindPopup(title);
+         marker.on('click', onClick_Marker)
 			yesMarkers.addLayer(marker);
           
           
@@ -556,8 +585,9 @@ output.innerHTML = slider.value;
         map.addLayer(yesMarkers);
         for (i=0;i<noCoords.length;i++) {
           title = `Common Name:  ${noCoords[i].properties.comname} <br> Scientific Name:  ${noCoords[i].properties.sciname} `
-          var marker = L.marker(new L.LatLng(noCoords[i].center.coordinates[1], noCoords[i].center.coordinates[0]), { title: title ,icon: greenIcon, stuff: i});
+          var marker = new L.marker(new L.LatLng(noCoords[i].center.coordinates[1], noCoords[i].center.coordinates[0]), { title: title ,icon: greenIcon, stuff: noCoords[i]});
 			marker.bindPopup(title);
+         marker.on('click', onClick_Marker)
 			noMarkers.addLayer(marker);
           
           
@@ -567,8 +597,9 @@ output.innerHTML = slider.value;
         } else if (document.getElementById("context").value== "people") {
           for (i=0;i<yesCoords.length;i++) {
           title = `Population: ${yesCoords[i].properties.P1_001N}`
-          var marker = L.marker(new L.LatLng(yesCoords[i].center.coordinates[1], yesCoords[i].center.coordinates[0]), { title: title ,icon: redIcon,stuff: i});
+          var marker = L.marker(new L.LatLng(yesCoords[i].center.coordinates[1], yesCoords[i].center.coordinates[0]), { title: title ,icon: redIcon,stuff: yesCoords[i]});
 			marker.bindPopup(title);
+            marker.on('click', onClick_Marker)
 			yesMarkers.addLayer(marker);
           
           
@@ -577,8 +608,9 @@ output.innerHTML = slider.value;
         map.addLayer(yesMarkers);
         for (i=0;i<noCoords.length;i++) {
           title = `Population: ${noCoords[i].properties.P1_001N}`
-          var marker = L.marker(new L.LatLng(noCoords[i].center.coordinates[1], noCoords[i].center.coordinates[0]), { title: title ,icon: greenIcon,stuff: i});
+          var marker = L.marker(new L.LatLng(noCoords[i].center.coordinates[1], noCoords[i].center.coordinates[0]), { title: title ,icon: greenIcon,stuff: noCoords[i] });
 			marker.bindPopup(title);
+         marker.on('click', onClick_Marker)
 			noMarkers.addLayer(marker);
           
           
@@ -727,7 +759,48 @@ Species at Risk: ${speciesCount} out of 62</p>`;
     });
       
       
+      
+      
+      var onEachFeature = function(feature, layer) {
+    // Load the default style. 
+    layer.setStyle(defaultStyle);
+    // Create a self-invoking function that passes in the layer
+    // and the properties associated with this particular record.
+    (function(layer, properties) {
+      // Create a mouseover event
+      layer.on("mouseover", function (e) {
+        // Change the style to the highlighted version
+        layer.setStyle(highlightStyle);
+      
+       
+      });
+      layer.on("click", function (e) {
+        // Change the style to the highlighted version
+        if (document.getElementById("context").value=="people") {
+          
+        } else if (document.getElementById("context").value=="animals" || document.getElementById("context").value=="plants") {
+          
+        }
+        
+       
+      });
+      
+      layer.on("mouseout", function (e) {
+        // Start by reverting the style back
+        layer.setStyle(defaultStyle); 
+        // And then destroying the popup
+        
+      });
+      // Close the "anonymous" wrapper function, and call it while passing
+      // in the variables necessary to make the events work the way we want.
+    })(layer, feature.properties);
+};
+     
+      
+      function onClick_Marker(e) {
+
+      }
+      
     </script>
   </body>
 </html>
-
