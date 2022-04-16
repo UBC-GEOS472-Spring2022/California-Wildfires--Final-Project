@@ -354,12 +354,10 @@ h3 {
                             								zoom: 6 
                           								}  // this object holds map options
                                     );
+      mapbox://styles/erickv112/cl201tg5t001315lonqa4fkm9
       
-let url2 = 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_nolabels/{z}/{x}/{y}.png';
-        L.tileLayer(url2, {
-            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CARTO</a>',
-           
-        }).addTo(map);
+var url2 = 'https://api.mapbox.com/styles/v1/erickv112/cl201tg5t001315lonqa4fkm9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZXJpY2t2MTEyIiwiYSI6ImNsMXBmdDN0bjB0aHgzZm80NWxnYnV2cTIifQ.5eW6PmQCeWwbOAQgRI8TKw';
+        L.tileLayer(url2).addTo(map);
       
        
       
@@ -435,7 +433,7 @@ output.innerHTML = slider.value;
         updatePlot();
       });
       function updatePlot() {
-        if (!rasterLayer) {
+        if (!rasterLayer && tiffLink != "no") {
           rasterLayer = L.leafletGeotiff(
             url=tiffLink,
             options={band: 0,
@@ -445,10 +443,15 @@ output.innerHTML = slider.value;
                 colorScale: 'hello',
                 clampLow: false,
                 clampHigh: true,
+                opacity: 0.15,
                 
             }
         ).addTo(map);
-        } else {
+        } else if (tiffLink == "no") {
+          if (rasterLayer) {
+            rasterLayer.remove(); }
+          
+          } else {
           rasterLayer.setURL(tiffLink);
         
           
@@ -625,7 +628,11 @@ output.innerHTML = slider.value;
       function filterCoords() {
         yesCoords = [];
         noCoords = []; 
+       
         if (contextJson != "no") {
+           if (tiffLink = "no") {
+          noCoords = contextJson.features;
+        } else {
         for (var i=0; i<contextJson.features.length;i++) {
           tempCoords = contextJson.features[i].center.coordinates
           if (rasterLayer.getValueAtLatLng(tempCoords[1],tempCoords[0]) < document.getElementById("myRange").value) {
@@ -637,7 +644,7 @@ output.innerHTML = slider.value;
         }
        
       }
-        
+        }
       }
       
       function contextInfo() {
