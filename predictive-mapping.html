@@ -334,16 +334,16 @@ h3 {
             
           }
           
-          hello("data/people.json","people");
+          hello("people.json","people");
 
-          hello("data/plants.json","plants");
+          hello("plants.json","plants");
    
-          hello("data/animals.json","animals");
+          hello("animals.json","animals");
      
    
 
     
-     var tiffLink = "https://geotiff.github.io/georaster-layer-for-leaflet-example/example_4326.tif";
+     var tiffLink = "no";
       var contextLink = "https://geotiff.github.io/georaster-layer-for-leaflet-example/example_4326.tif";
                           // Make a Leaflet map with L.map().
                           // Store the map in the variable 'map'.
@@ -673,7 +673,7 @@ output.innerHTML = slider.value;
               perc = perc.toFixed(2);
               var percY = 1-whiY/popY;
               percY = percY.toFixed(2)
-             document.getElementById("conInfo").innerHTML = `<h3 style = "font-size: 13px"> Population Impact Summary </h3><p>Census Tracts at Risk: ${yesCoords.length} out of ${yesCoords.length+noCoords.length} </p><br> <p>Of the at-risk population, ${percY*100}% are people of color (POC) while in California, ${perc*100}% of people are POC. </p>`;
+             document.getElementById("conInfo").innerHTML = `<h3 style = "font-size: 13px"> Population Impact Summary </h3><p>Census Tracts at Risk: ${yesCoords.length} out of ${yesCoords.length+noCoords.length} </p><br> <p>Of the at-risk population, ${percY*100}% are people of color (POC) and in the state of California, ${perc*100}% of people are POC. </p>`;
             break;
           case "animals":
               totalArea = 0;
@@ -708,7 +708,7 @@ output.innerHTML = slider.value;
             
               
               document.getElementById("conInfo").innerHTML = `<h3 style = "font-size: 13px"> Endangered Animal Species Impact Summary </h3><p>Habitat Area At Risk: ${percRisk.toFixed(2)*100}%, <br>
-Species at Risk: ${speciesCount} out of 56</p>`;
+Species at Risk: ${speciesCount} out of 56</p><br> <p>The species included here are those whose habitats are considered critical by the US Fish and Wildlife Service.</p>`;
              
             break;
           case "plants":
