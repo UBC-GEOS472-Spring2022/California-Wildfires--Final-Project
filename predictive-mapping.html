@@ -630,7 +630,7 @@ output.innerHTML = slider.value;
         noCoords = []; 
        
         if (contextJson != "no") {
-           if (tiffLink = "no") {
+           if (tiffLink == "no") {
           noCoords = contextJson.features;
         } else {
         for (var i=0; i<contextJson.features.length;i++) {
