@@ -292,6 +292,7 @@ h3 {
       var plantJson;
       var contextPolygons;
 
+      //takes json, reads it and add centers for each of the polygons. Takes the center of the centers of a multipolygon, if applicable.
           async function hello(str1,str) {
            
        
@@ -360,7 +361,7 @@ var url2 = 'https://api.mapbox.com/styles/v1/erickv112/cl201tg5t001315lonqa4fkm9
         L.tileLayer(url2).addTo(map);
       
        
-      
+      //listeners for interactive elements
       document.getElementById("climate").addEventListener("change", changeClimateLayer);
       
       document.getElementById("context").addEventListener("change", changeContextLayer);
@@ -369,6 +370,8 @@ var url2 = 'https://api.mapbox.com/styles/v1/erickv112/cl201tg5t001315lonqa4fkm9
 var output = document.getElementById("demo");
 output.innerHTML = slider.value;
       
+      
+    //assigns correct link for MaxEnt Model Output
       function changeClimateLayer(e) {
          RCPScenario = document.getElementById("climate").value;
           switch (RCPScenario) {
@@ -402,11 +405,9 @@ output.innerHTML = slider.value;
           
         }
         updatePlot();
-      }
-     
-      
-      
-      
+      } 
+    
+      // assigns correct json file depending on a change in the selected contextual layer
       function changeContextLayer(e) {
        var contextVar = document.getElementById("context").value;
           switch (contextVar) {
@@ -432,7 +433,11 @@ output.innerHTML = slider.value;
       output.innerHTML = slider.value;
         updatePlot();
       });
+      
+      //general update function called whenever there is a change
       function updatePlot() {
+        
+        //plots raster layer, if it has been selected
         if (!rasterLayer && tiffLink != "no") {
           rasterLayer = L.leafletGeotiff(
             url=tiffLink,
@@ -458,8 +463,7 @@ output.innerHTML = slider.value;
           
         }
         
-        //plot areas for contextual variables 
-        
+        //plot areas for contextual variables   
         if (contextPolygons) {
           contextPolygons.remove();
         }
@@ -484,9 +488,8 @@ output.innerHTML = slider.value;
         updateInfo();
         
       }
-      
+      //
       function updateLegend() {
-        document.getElementById("legendContents").innerHTML = "<p> Weee</p>"
         //makes sure labels on legend are correct based on contextual layer
         var label = ""
         if (document.getElementById("context").value == "people") {
@@ -498,6 +501,7 @@ output.innerHTML = slider.value;
         }
         
         if (tiffLink != "no") {
+          //sliding image for legend
           document.getElementById("legendContents").innerHTML = `<p><strong>Fire Risk:  </strong></p> <br>
        <p> 0 <img id="colorScaleImage" src="" style="vertical-align: middle; height:20px; width:100px; border: 2px solid #000000;"/> 1</p>`
             document.getElementById('colorScaleImage').setAttribute('src',rasterLayer.colorScaleData);
@@ -516,7 +520,7 @@ output.innerHTML = slider.value;
         
         
         
-        
+        //information on the individual RCP scenarios
         switch (RCPScenario) {
           case '': 
             document.getElementById("RCPInfo").innerHTML = "";
@@ -553,10 +557,12 @@ output.innerHTML = slider.value;
       }
       
       function plotPoints() {
+        //doesn't plot them twice
         if (yesMarkers && noMarkers) {
           yesMarkers.remove();
           noMarkers.remove();
         }
+        //two cluster groups so they can be symbolized accordingly
         yesMarkers =  new L.MarkerClusterGroup({ 
     iconCreateFunction: function (cluster) {
         var markers = cluster.getAllChildMarkers();
@@ -574,6 +580,8 @@ output.innerHTML = slider.value;
     spiderfyOnMaxZoom: false, showCoverageOnHover: true, zoomToBoundsOnClick: true 
 });
       
+        //there is some code redudancy here, as the data doesn't have the same property fields for all the contextual layers
+        //essentially for both the yesCoords and noCoords, each point is added to a marker group and then the group is plotted
         if (document.getElementById("context").value == "animals" || document.getElementById("context").value == "plants")  {
         for (i=0;i<yesCoords.length;i++) {
           title = `Common Name:  ${yesCoords[i].properties.comname} <br> Scientific Name:  ${yesCoords[i].properties.sciname} `
@@ -626,6 +634,7 @@ output.innerHTML = slider.value;
       }
       
       function filterCoords() {
+        //points go to yesCoords if their risk value is above or equal the threshold and noCoords otherwise
         yesCoords = [];
         noCoords = []; 
        
@@ -648,6 +657,7 @@ output.innerHTML = slider.value;
       }
       
       function contextInfo() {
+        //summary stats based on the selected contextual layer
         var contextVar = document.getElementById("context").value;
           switch (contextVar) {
           case '': 
@@ -750,7 +760,7 @@ Species at Risk: ${speciesCount} out of 62</p>`;
         }
       }
     
-     //!!! check if working?
+   //displays risk level on click
       map.on("click", (e) => {        
        
   value = rasterLayer.getValueAtLatLng(e.latlng.lat,e.latlng.lng);
@@ -767,7 +777,7 @@ Species at Risk: ${speciesCount} out of 62</p>`;
       
       
       
-      
+      //controls shading on hover
       var onEachFeature = function(feature, layer) {
     // Load the default style. 
     layer.setStyle(defaultStyle);
@@ -803,7 +813,7 @@ Species at Risk: ${speciesCount} out of 62</p>`;
     })(layer, feature.properties);
 };
      
-      
+      //I didn't end up using this, unfortunately
       function onClick_Marker(e) {
 
       }
